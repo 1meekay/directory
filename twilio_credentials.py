@@ -1,4 +1,4 @@
-accSid = 'ACfe58ee7c8529e9d85173d7cfa59cbbef'
-authToken = '70e8c09c79ab3d7fd22c35493f985af4'
+accSid = '1234567890'
+authToken = '1234567890'
 
-recoveryCode = '4If+NpAGzjmUd3pvefEFYtEDDmby+N4qiHdXLOnT'
+recoveryCode = '1234567890'
