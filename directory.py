@@ -1,10 +1,9 @@
-from directoryClass import Contacts
-from directoryClass import conn, cursor
+from directoryClass import Contacts, conn, cursor
 import sendSMS
 
 vault_pass = open('vault_pass.txt', 'r').read()
 
-def first_time():
+def first_run():
     def create_table():
         cursor.execute("""CREATE TABLE contacts (
                     name text,
@@ -341,5 +340,5 @@ def exit_directory():
 
 # =====================================================================================
 
-# first_time()
+# first_run()
 welcome()
