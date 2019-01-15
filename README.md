@@ -1,13 +1,15 @@
 # directory
 Password-protected directory with the options to add, change, delete, find, and view contacts stored in a sqlite database.. also send SMS through Twilio API, and set and change password
 
+also features a pandas DataFrame to represent contacts database
+
 ================================================================
 
 contactDirectory.db   -- database file to store contacts
 
 directory.py          -- main python file, heart of program
 
-directoryClass.py     -- driver, contains contacts class and sqlite3 connection
+directoryClass.py     -- foundation, contains Contacts class and sqlite3 connection
 
 sendSMS.py            -- for sending SMS messages, contains Twilio API import and a send function
 
