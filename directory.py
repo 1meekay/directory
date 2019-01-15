@@ -278,13 +278,12 @@ def send_message():
             else:
                 message = input("Message: ")
                 sendSMS.send(target_number, message)
+                print("\nYour message to {} has been sent.".format(to))
                 proceed()
         else:
             message = input("Message: ")
             number = cursor.execute("SELECT number FROM contacts WHERE name =  (?)", (to,)).fetchone()[0]
-
             sendSMS.send(number, message)
-
             print("\nYour message to {} has been sent.".format(to))
             proceed()
     else:
@@ -325,7 +324,6 @@ def change_password():
             new_vault_pass.write(new_pass)
 
         print('>> You have successfully changed the password.')
-
         proceed()
 
 def proceed():
