@@ -1,5 +1,5 @@
 from directoryClass import Contacts, conn, cursor
-import sendSMS
+import sendSMS, pandas
 
 def first_run():
     def create_table():
@@ -233,13 +233,9 @@ def find_contact():
         proceed()
 
 def view_contacts():
-    print()
+    contacts = pandas.DataFrame(cursor.execute("SELECT * FROM contacts ORDER BY name").fetchall())
 
-    list_of_contacts = cursor.execute("SELECT * FROM contacts ORDER BY name").fetchall()
-
-    for item in list_of_contacts:
-        print(item)
-
+    print(contacts)
     proceed()
 
 def send_message():
