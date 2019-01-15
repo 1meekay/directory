@@ -1,8 +1,6 @@
 from directoryClass import Contacts, conn, cursor
 import sendSMS
 
-vault_pass = open('vault_pass.txt', 'r').read()
-
 def first_run():
     def create_table():
         cursor.execute("""CREATE TABLE contacts (
@@ -15,8 +13,8 @@ def first_run():
                          "Welcome to Password Creation.\n"
                          "=============================\n\n"
                          "Enter new password: ")
-        new_vault_pass = open('vault_pass.txt', 'w')
-        new_vault_pass.write(new_pass)
+        with open('vault_pass.txt', 'w') as new_vault_pass:
+            new_vault_pass.write(new_pass)
         print(">> New password created.")
 
     # create_table()
@@ -26,7 +24,7 @@ def first_run():
 def login():
     ui_pass = input('\nEnter the password: ')
 
-    if ui_pass != vault_pass:
+    if ui_pass != password():
         print(">> Sorry, wrong password.")
         login()
 
@@ -293,6 +291,12 @@ def send_message():
         print(">> {} not found.".format(to))
         proceed()
 
+def password():
+    with open('vault_pass.txt', 'r') as vault_pass:
+        vault_pass = vault_pass.read()
+
+    return vault_pass
+
 def change_password():
     old_pass = input('\nEnter old password: ')
 
@@ -302,34 +306,37 @@ def change_password():
         elif retry == 'r':
             change_password()
         elif retry != 'm' or 'r':
-            retry = input('\n>>Sorry, that was not an option. Try again: ')
-            retry_options(retry)
+            unrecognized = input('>> Unrecognized response. Try again.\n\n'
+                                 'How would you like to proceed?\n'
+                                 'm: Return to Main Menu\n'
+                                 'r: Retry password change\n\n')
+            retry_options(unrecognized)
 
-    if old_pass != vault_pass:
-        wrong_pass = input('\n>>Sorry, you have entered the wrong password.\n'
-                          'How would you like to proceed?\n\n'
+    if old_pass != password():
+        wrong_pass = input('>> Sorry, you have entered the wrong password.\n\n'
+                          'How would you like to proceed?\n'
                           'm: Return to Main Menu\n'
                           'r: Retry password change\n\n')
         retry_options(wrong_pass)
     else:
         new_pass = input('Please enter new password: ')
 
-        new_vault_pass = open('vault_pass.txt', 'w')
-        new_vault_pass.write(new_pass)
+        with open('vault_pass.txt', 'w') as new_vault_pass:
+            new_vault_pass.write(new_pass)
 
-        print('You have successfully changed the password.')
+        print('>> You have successfully changed the password.')
 
         proceed()
 
 def proceed():
-    u_proceed = input('\nHow would you like to proceed?\n'
+    user_proceed = input('\nHow would you like to proceed?\n'
                      'm: Return to Main Menu\n'
                      'q: Quit\n\n')
 
-    if u_proceed == 'm':
+    if user_proceed == 'm':
         start_menu()
-    elif u_proceed == 'q':
-        quit()
+    elif user_proceed == 'q':
+        exit_directory()
     else:
         print('>> Response not recognized.')
         proceed()
