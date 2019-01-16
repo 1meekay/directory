@@ -17,9 +17,15 @@ def first_run():
             new_vault_pass.write(new_pass)
         print(">> New password created.")
 
-    # create_table()
+    create_table()
     create_password()
     welcome()
+
+def welcome():
+    print("\n=========================\n"
+          "Welcome to the Directory.\n"
+          "=========================")
+    login()
 
 def login():
     ui_pass = input('\nEnter the password: ')
@@ -29,14 +35,8 @@ def login():
         login()
 
     else:
-        print('Welcome!')
+        print('>> Welcome!')
         start_menu()
-
-def welcome():
-    print("\n=========================\n"
-          "Welcome to the Directory.\n"
-          "=========================")
-    login()
 
 def start_menu():
     user_action = input('\n===========================\n'
@@ -134,6 +134,24 @@ def change_contact():
             which_change(name, target_number)
 
 def which_change(name, number):
+    def change_name(old_name, number):
+        new_name = input("\n>> Enter {}'s new name: ".format(old_name))
+
+        cursor.execute("UPDATE contacts SET name = (?) WHERE name = (?) AND number = (?)",
+                       (new_name, old_name, number,))
+        conn.commit()
+
+        view_contacts()
+
+    def change_number(name, old_number):
+        new_number = int(input("\n>> Enter {}'s new number: ".format(name)))
+
+        cursor.execute("UPDATE contacts SET number = (?) WHERE name = (?) AND number = (?)",
+                       (new_number, name, old_number,))
+        conn.commit()
+
+        view_contacts()
+
     which = input("\nWould you like to change {}'s name or number?"
                   "\n[1-name, 2-number]: ".format(name))
 
@@ -145,21 +163,6 @@ def which_change(name, number):
         print('>> Response not recognized.')
         which_change(name, number)
 
-def change_name(old_name, number):
-    new_name = input("\n>> Enter {}'s new name: ".format(old_name))
-
-    cursor.execute("UPDATE contacts SET name = (?) WHERE name = (?) AND number = (?)", (new_name, old_name, number,))
-    conn.commit()
-
-    view_contacts()
-
-def change_number(name, old_number):
-    new_number = int(input("\n>> Enter {}'s new number: ".format(name)))
-
-    cursor.execute("UPDATE contacts SET number = (?) WHERE name = (?) AND number = (?)", (new_number, name, old_number,))
-    conn.commit()
-
-    view_contacts()
 
 def delete_contact():
     name = input('\nEnter the name of the contact you wish to delete: ')
@@ -234,8 +237,11 @@ def find_contact():
 
 def view_contacts():
     contacts = pandas.DataFrame(cursor.execute("SELECT * FROM contacts ORDER BY name").fetchall())
+    contacts.columns = ['Name', 'Number']
 
+    print()
     print(contacts)
+
     proceed()
 
 def send_message():
