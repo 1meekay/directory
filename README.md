@@ -28,7 +28,9 @@ Message to viewer:
 ================================================================
 
 update 1/17
+
     -- updated to check if program is running for the first time
+
     -- added:
 
         if __name__ == '__main__':
