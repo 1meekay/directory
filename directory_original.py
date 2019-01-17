@@ -1,48 +1,60 @@
-from directoryClass import sqlite3, Contacts, conn, cursor
-import sendSMS, pandas, pickle
+from directoryClass import Contacts, conn, cursor
+import sendSMS, pandas
 
-def welcome(file_name):
+def first_run():
+    def create_table():
+        cursor.execute("""CREATE TABLE contacts (
+                    name text,
+                    number integer) """)
+
+    def create_password():
+
+        new_pass = input("\n=============================\n"
+                         "Welcome to Password Creation.\n"
+                         "=============================\n\n"
+                         "Enter new password: ")
+        with open('vault_pass.txt', 'w') as new_vault_pass:
+            new_vault_pass.write(new_pass)
+        print(">> New password created.")
+
+    create_table()
+    create_password()
+    welcome()
+
+def welcome():
     print("\n=========================\n"
           "Welcome to the Directory.\n"
           "=========================")
-    login(file_name)
+    login()
 
-def login(file_name):
+def login():
     ui_pass = input('\nEnter the password: ')
 
-    if ui_pass != create_password(file_name):
+    if ui_pass != password():
         print(">> Sorry, wrong password.")
-        login(file_name)
+        login()
 
     else:
         print('>> Welcome!')
         start_menu()
 
-def create_table():
-    try:
-        cursor.execute("""CREATE TABLE contacts (
-                    name text,
-                    number integer) """)
-    except sqlite3.OperationalError:
-        pass
-
 def start_menu():
     user_action = input('\n===========================\n'
-                        'What would you like to do?\n'
-                        '===========================\n'
-                        'a: Add contact\n'
-                        'c: Change contact\n'
-                        'd: Delete contact\n'
-                        'f: Find contact\n'
-                        'v: View contacts\n'
-                        '---------------------------\n'
-                        'sms: Send SMS\n'
-                        '---------------------------\n'
-                        'pass: Change password\n'
-                        '---------------------------\n'
-                        'q: Quit\n'
-                        '===========================\n\n'
-                        'Enter here: ')
+                    'What would you like to do?\n'
+                    '===========================\n'
+                    'a: Add contact\n'
+                    'c: Change contact\n'
+                    'd: Delete contact\n'
+                    'f: Find contact\n'
+                    'v: View contacts\n'
+                    '---------------------------\n'
+                    'sms: Send SMS\n'
+                    '---------------------------\n'
+                    'pass: Change password\n'
+                    '---------------------------\n'
+                    'q: Quit\n'
+                    '===========================\n\n'
+                    'Enter here: ')
     menu(user_action)
 
 def menu(user_action):
@@ -50,7 +62,7 @@ def menu(user_action):
 
     if user_action not in actions_list:
         user_action = input('>> Action not recognized, please try again.\n\n'
-                            'Enter here: ')
+                        'Enter here: ')
         menu(user_action)
     else:
         if user_action == 'a':
@@ -107,15 +119,13 @@ def change_contact():
         if list_results.count(name) > 1:
             print('\n>> There is more than one {}.'.format(name))
 
-            number_of_name = int(
-                input('\nEnter the number of the {} contact that you want to change: '.format(name)))
+            number_of_name = int(input('\nEnter the number of the {} contact that you want to change: '.format(name)))
 
             if number_of_name not in list_results:
                 print(">> Number doesn't match. Try again.")
                 change_contact()
             else:
-                target_name = \
-                    cursor.execute("SELECT * FROM contacts WHERE number = (?)", (number_of_name,)).fetchone()[0]
+                target_name = cursor.execute("SELECT * FROM contacts WHERE number = (?)", (number_of_name,)).fetchone()[0]
 
                 which_change(target_name, number_of_name)
         else:
@@ -153,6 +163,7 @@ def which_change(name, number):
         print('>> Response not recognized.')
         which_change(name, number)
 
+
 def delete_contact():
     name = input('\nEnter the name of the contact you wish to delete: ')
 
@@ -177,8 +188,7 @@ def delete_contact():
                 for number in items:
                     list_of_numbers.append(number)
 
-            target_number = int(
-                input('\nEnter the number of the {} contact that you wish to delete: '.format(name)))
+            target_number = int(input('\nEnter the number of the {} contact that you wish to delete: '.format(name)))
 
             if target_number not in list_of_numbers:
                 print(">> Number doesn't match any of the contacts.")
@@ -282,47 +292,15 @@ def send_message():
         print(">> {} not found.".format(to))
         proceed()
 
-def proceed():
-    user_proceed = input('\nHow would you like to proceed?\n'
-                         'm: Return to Main Menu\n'
-                         'q: Quit\n\n')
+def password():
+    with open('vault_pass.txt', 'r') as vault_pass:
+        vault_pass = vault_pass.read()
 
-    if user_proceed == 'm':
-        start_menu()
-    elif user_proceed == 'q':
-        exit_directory()
-    else:
-        print('>> Response not recognized.')
-        proceed()
-
-def exit_directory():
-    print('>> Enjoy the rest of your day, goodbye!')
-    conn.close()
-
-    quit()
-
-def create_password(file):
-    try:
-        with open('{}.txt'.format(file), 'r') as vault_pass:
-            user_pass = vault_pass.read()
-
-            if user_pass.__len__() > 0:
-                return user_pass
-            else:
-                raise FileNotFoundError
-    except FileNotFoundError:
-        new_pass = input("\n=============================\n"
-                         "Welcome to Password Creation.\n"
-                         "=============================\n\n"
-                         "Enter new password: ")
-
-        with open('{}.txt'.format(file), 'w') as new_vault_pass:
-            new_vault_pass.write(new_pass)
-
-        print(">> New password created.")
-        create_password(file)
+    return vault_pass
 
 def change_password():
+    old_pass = input('\nEnter old password: ')
+
     def retry_options(retry):
         if retry == 'm':
             start_menu()
@@ -335,42 +313,39 @@ def change_password():
                                  'r: Retry password change\n\n')
             retry_options(unrecognized)
 
-    p_in = pickle.load(open('file.pickle', 'rb'))
-
-    old_pass = input('\nEnter old password: ')
-
-    if old_pass != create_password(p_in):
+    if old_pass != password():
         wrong_pass = input('>> Sorry, you have entered the wrong password.\n\n'
-                           'How would you like to proceed?\n'
-                           'm: Return to Main Menu\n'
-                           'r: Retry password change\n\n')
+                          'How would you like to proceed?\n'
+                          'm: Return to Main Menu\n'
+                          'r: Retry password change\n\n')
         retry_options(wrong_pass)
     else:
         new_pass = input('Please enter new password: ')
 
-        with open('{}.txt'.format(p_in), 'w') as new_vault_pass:
+        with open('vault_pass.txt', 'w') as new_vault_pass:
             new_vault_pass.write(new_pass)
 
         print('>> You have successfully changed the password.')
         proceed()
 
-def start():
-    try:
-        with open('file.pickle', 'wb') as p_out:
-            pickle.dump(input('\nEnter password file name (omit file extenstion): '), p_out)
-            p_out.close()
+def proceed():
+    user_proceed = input('\nHow would you like to proceed?\n'
+                     'm: Return to Main Menu\n'
+                     'q: Quit\n\n')
 
-        p_in = pickle.load(open('file.pickle', 'rb'))
+    if user_proceed == 'm':
+        start_menu()
+    elif user_proceed == 'q':
+        exit_directory()
+    else:
+        print('>> Response not recognized.')
+        proceed()
 
-        if p_in.isidentifier() is True:
-            create_password(p_in)
-            welcome(p_in)
-            create_table()
-        else:
-            raise FileNotFoundError
-    except FileNotFoundError:
-        print('>> Unsupported file name. Valid identifiers only.')
-        start()
+def exit_directory():
+    print('\nEnjoy the rest of your day, goodbye!')
+    conn.close()
 
-if __name__ == '__main__':
-    start()
+# =====================================================================================
+
+# first_run()
+welcome()
