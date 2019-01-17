@@ -29,12 +29,12 @@ Message to viewer:
 
 update 1/17
 
-    -- updated to check if program is running for the first time
+    >> updated to check if program is running for the first time
 
-    -- added:
+    >> added:
 
         if __name__ == '__main__':
           start()
 
 
-    -- use pickle for reading file name input
+    >> use pickle for reading file name input
