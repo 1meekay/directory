@@ -114,8 +114,7 @@ def change_contact():
                 print(">> Number doesn't match. Try again.")
                 change_contact()
             else:
-                target_name = \
-                    cursor.execute("SELECT * FROM contacts WHERE number = (?)", (number_of_name,)).fetchone()[0]
+                target_name = cursor.execute("SELECT * FROM contacts WHERE number = (?)", (number_of_name,)).fetchone()[0]
 
                 which_change(target_name, number_of_name)
         else:
