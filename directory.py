@@ -361,7 +361,7 @@ def start():
 
         p_in = pickle.load(open('file.pickle', 'rb'))
 
-        if p_in.isidentifier() is True:
+        if p_in.isidentifier():
             create_password(p_in)
             welcome(p_in)
             create_table()
