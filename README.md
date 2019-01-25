@@ -9,6 +9,8 @@ contactDirectory.db   -- database file to store contacts
 
 directory.py          -- main python file, heart of program
 
+directory_original.py -- original program containing loose methods, (before major upgrades)
+
 directoryClass.py     -- foundation, contains Contacts class and sqlite3 connection
 
 sendSMS.py            -- for sending SMS messages, contains Twilio API import and a send function
