@@ -19,6 +19,8 @@ twiliocredentials.py  -- contains account SID, authToken, and recovery code for 
 
 vault_pass.txt        -- contains password of vault
 
+file.pickle           -- pickle file used to read and check password
+
 ================================================================
 
 Message to viewer:
