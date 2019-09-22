@@ -357,7 +357,6 @@ def start():
     try:
         with open('file.pickle', 'wb') as p_out:
             pickle.dump(input('\nEnter password file name (omit file extenstion): '), p_out)
-            p_out.close()
 
         p_in = pickle.load(open('file.pickle', 'rb'))
 
